@@ -1,0 +1,19 @@
+{
+  "name": "thing-broken/thing-broken",
+  "description": "A library for integrating with the Thing Broken API",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Sam Littler",
+      "email": "samlittler57@gmail.com"
+    }
+  ],
+  "require": {
+    "guzzlehttp/guzzle": "^6.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "ThingBroken\\ThingBroken\\": "src/"
+    }
+  }
+}
