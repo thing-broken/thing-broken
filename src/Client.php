@@ -22,6 +22,12 @@ class Client
         self::$instance = new self($api_key);
     }
 
+    public function fire(string $event_name)
+    {
+        $event = new Event($event_name);
+        $event->send();
+    }
+
     public function __construct(string $api_key)
     {
         $this->api_key = $api_key;
