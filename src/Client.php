@@ -4,7 +4,7 @@ namespace ThingBroken\ThingBroken;
 
 class Client
 {
-    const SNR_URL = 'http://localhost:80/v1';
+    const SNR_URL = 'https://thing-broken.com/api/v1';
 
     private static $instance = null;
 
