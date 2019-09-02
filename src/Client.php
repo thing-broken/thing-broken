@@ -2,6 +2,10 @@
 
 namespace ThingBroken\ThingBroken;
 
+use GuzzleHttp\Exception\ClientException;
+use ThingBroken\ThingBroken\Exception\BadAPIKey;
+use ThingBroken\ThingBroken\Exception\UnknownEvent;
+
 class Client
 {
     const SNR_URL = 'https://thing-broken.com/api/v1';
@@ -39,18 +43,28 @@ class Client
             'timeout' => 5,
         ]);
 
-        $response = $guzzle_client->post(self::SNR_URL . '/event', [
-            'form_params' => [
-                'host_name' => gethostname(),
-                'event_name' => $event->getName(),
-            ],
-            'headers' => [
-                'Authorization' => $this->api_key,
-            ],
-        ]);
-
-        if ($response->getStatusCode() !== 200) {
-            throw new \Exception('Nopes');
+        try {
+            $guzzle_client->post(self::SNR_URL . '/event', [
+                'form_params' => [
+                    'host_name' => gethostname(),
+                    'event_name' => $event->getName(),
+                ],
+                'headers' => [
+                    'Authorization' => $this->api_key,
+                ],
+            ]);
+        } catch (ClientException $clientException) {
+            $response_body = $clientException->getResponse()->getBody();
+            $response = json_decode($response_body);
+            if ($clientException->getCode() === 400) {
+                if (!empty($response->errors->event_name)) {
+                    throw new UnknownEvent($response->errors->event_name[0]);
+                }
+            }
+            if ($clientException->getCode() === 403) {
+                throw new BadAPIKey($response->message);
+            }
+            throw $clientException;
         }
     }
 }
