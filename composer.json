@@ -2,6 +2,7 @@
   "name": "thing-broken/thing-broken",
   "description": "A library for integrating with the Thing Broken API",
   "type": "library",
+  "license": "MIT",
   "authors": [
     {
       "name": "Sam Littler",
@@ -9,6 +10,7 @@
     }
   ],
   "require": {
+    "php": ">=7.0",
     "ext-json": "*",
     "guzzlehttp/guzzle": "^6.3"
   },
