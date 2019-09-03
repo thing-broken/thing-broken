@@ -4,39 +4,66 @@ namespace ThingBroken\ThingBroken;
 
 use GuzzleHttp\Exception\ClientException;
 use ThingBroken\ThingBroken\Exception\BadAPIKey;
+use ThingBroken\ThingBroken\Exception\NotInstantiated;
 use ThingBroken\ThingBroken\Exception\UnknownEvent;
 
+/**
+ * Class Client
+ * @package ThingBroken\ThingBroken
+ */
 class Client
 {
     const SNR_URL = 'https://thing-broken.com/api/v1';
 
     private static $instance = null;
 
+    /**
+     * @return Client
+     * @throws NotInstantiated
+     */
     public static function getInstance() : self
     {
         if (self::$instance === null) {
-            throw new \Exception('You must call Client::init first');
+            throw new NotInstantiated('You must call Client::init first.');
         }
 
         return self::$instance;
     }
 
+    /**
+     * @param string $api_key
+     */
     public static function init(string $api_key)
     {
         self::$instance = new self($api_key);
     }
 
+    /**
+     * @param string $event_name
+     * @throws BadAPIKey
+     * @throws NotInstantiated
+     * @throws UnknownEvent
+     */
     public function fire(string $event_name)
     {
         $event = new Event($event_name);
         $event->send();
     }
 
+    /**
+     * Client constructor.
+     * @param string $api_key
+     */
     public function __construct(string $api_key)
     {
         $this->api_key = $api_key;
     }
 
+    /**
+     * @param Event $event
+     * @throws BadAPIKey
+     * @throws UnknownEvent
+     */
     public function send(Event $event)
     {
         $guzzle_client = new \GuzzleHttp\Client([
